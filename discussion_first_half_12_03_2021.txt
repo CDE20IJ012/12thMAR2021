@@ -1,0 +1,98 @@
+Q Is it possible that I won't be writing any xml file
+and even not for configuration in hibernate.
+A: yes
+
+import java.util.Properties;
+
+Configuration configuration = new Configuration(); 
+
+
+Properties properties=new Properties();
+properties.put(Environment.DRIVER,"com.mysql.jdbc.Driver");
+properties.put(Environment.URL, "jdbc:mysql://localhost:3306/empDB");
+properties.put(Environment.USER,"root");
+properties.put(Environment.PASS, "password@123");
+properties.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5InnoDBDialect");
+properties.put(Environment.SHOW_SQL, "true");
+properties.put(Environment.HBM2DDL_AUTO, "update");
+configuration.setProperties(properties);
+
+<mapping class="com.demo.model.Student"/>
+configuration.addAnnotatedClass(Employee.class);
+---------------------------------------------------------------------------------------------------------
+hibernate.hbm2ddl.auto Automatically validates or exports schema DDL to the database when the SessionFactory is created. With create-drop, the database schema will be dropped when the SessionFactory is closed explicitly.
+
+e.g. validate | update | create | create-drop
+
+So the list of possible options are,
+
+validate: validate the schema, makes no changes to the database.
+update: update the schema.
+create: creates the schema, destroying previous data.
+create-drop: drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.
+none: does nothing with the schema, makes no changes to the database
+------------------------------------------------------------------------------------------------------------
+
+package com.cts.demo.domain;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Employee {
+@Id
+@GeneratedValue
+private int id;
+private String name;
+private int basic;
+public int getId() {
+	return id;
+}
+public void setId(int id) {
+	this.id = id;
+}
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+public int getBasic() {
+	return basic;
+}
+public void setBasic(int basic) {
+	this.basic = basic;
+}
+
+}
+---------------------------------------------------------------------------------------------------------------
+Observation I can see my hibernate application is not terminated even it has completed the steps mentioned.
+Solution  
+
+Write below code in the finally block.
+
+ if(!(sessionFactory.isClosed()))
+				  { 
+					  sessionFactory.close();
+				  }
+------------------------------------------------------------------------------------------------------------
+HQL ======> Hibernate Query Language 
+Q What advantage we get for HQL over SQL?
+A 
+*Avoid database portability hassles. Some of the syntax or specifically some of the function names are
+different in different databases. So if we go for JDBC, we the change in the database we have to change
+in the SQL statements.
+* HQL directly addresses the class and there we don't mention about the table and their columns. 
+  We directly address the class and its attributes.
+
+Q Can we write SQL statement as we used to write while working with JDBC?
+A Yes we can write with Hibernate using Native SQL. 
+---------------------------------------------------------------------------------------------------------------
+
+Hibernate - Criteria Queries
+
+
+
+
+
